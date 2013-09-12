@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" itemscope itemtype="http://schema.org/Event">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" xmlns:og="http://ogp.me/ns#" />
+	 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<!-- meta name="mobileoptimized" content="0" / -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	
+	<link rel="stylesheet" href="css/wl_controller.css" type="text/css" media="screen"/>
+	<link rel="stylesheet" href="thirdparty/jquery-ui.css">
+	<script type="text/javascript" src="thirdparty/jquery-1.8.3.js"></script>
+	<script type="text/javascript" src="thirdparty/jquery-ui.js"></script>
+	<script type="text/javascript" src="thirdparty/jquery.tinyscrollbar.js"></script>
+	<script type="text/javascript" src="thirdparty/base64.js"></script>
+	<script type="text/javascript" src="videoplayer/jwplayer-5.10/jwplayer.js"></script>
+	<script type="text/javascript" src="js/playerResize.js"></script>
+	<script type="text/javascript" src="js/wc_controller.js"></script>
+	<script type="text/javascript" src="js/wl_controller.js"></script>
+	
+	<script type="text/javascript">
+		var config = {
+			/* lecture path of the published lecture */
+			lectureDir: 'https://mediastream.cern.ch/MediaArchive/Video/Public/WebLectures/',
+			
+			/* jwplayer parameters */
+			provider: 'rtmp',
+			streamer: 'rtmp://wowza.cern.ch:1935/vod/',
+			relativePathStreamer: 'Video/Public/WebLectures/',
+			cameraFile: 'camera.mp4',
+			slidesFile: 'slides.mp4'
+		};
+		
+		function getParameterByName(name) {
+			name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+			var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+				results = regex.exec(location.search);
+			return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+		}
+		
+		/*
+		*
+		* We NEED this server configuration to work with protected dir
+		* Access-Control-Allow-Origin: *
+		* Access-Control-Allow-Methods: GET, POST, PUT, DELETE
+		* Access-Control-Allow-Headers: Authorization
+		*
+		*/
+		function checkProtection(lectureUrl) {
+			$.ajax({
+				url: lectureUrl,
+				dataType: 'xml',
+				success: checkProtectionCallback,
+				error: function (xhr, ajaxconfig, thrownError) {
+					console.log("Error: "+xhr.status+" "+thrownError);
+				}
+			});
+		}
+		
+		/*
+		*	Take year and lecture (INDICO ID) from query string
+		*	Take test (optional) to view lecture in test dir
+		*
+		*	After check the parameters, the weblecture player check if the dir is protected with checkProtection function and after call checkProtectionCallback.
+		*	The checkProtectionCallback initialize player_resize and AFTER with the playerResizeCallback function initialize wc_controller and wl_controller.
+		*/
+		jQuery(document).ready(function() {
+			config.year = getParameterByName('year');
+			
+			// check if year has any non-numeric characters
+			if(/\D/.test(config.year))
+				throw "the year must be composed by numbers";
+				
+			config.lecture = getParameterByName('lecture');
+				
+			// check if lecture has any non-alfanumeric characters
+			if(!(/^[A-Za-z0-9]+$/.test(config.lecture)))
+				throw "the lecture must be alfanumeric";
+				
+			config.test = getParameterByName('test');
+			config.relativePath = '';
+			
+			if(config.test.toUpperCase() == 'TRUE')
+				config.relativePath = 'test/'+config.year+'/'+config.lecture+'/';
+			else
+				config.relativePath = config.year+'/'+config.lecture+'/';
+				
+			config.lectureDir = config.lectureDir+config.relativePath;
+			config.relativePathStreamer = config.relativePathStreamer+config.relativePath;
+			checkProtection(config.lectureDir+'lecture.xml');
+		});
+		
+		function checkProtectionCallback(lectureData) {
+			config.lectureData = lectureData;
+			
+			jwplayer('cameraPlayer').setup({
+				skin: 'videoplayer/jwplayer-5.10/skin/nacht_cameraPlayer.zip',
+				width: 170,
+				height: 100,
+				timeinterval: 1000,
+				modes: [{
+					type: 'flash',
+					src: 'videoplayer/jwplayer-5.10/player.swf',
+					config: {
+						provider: config.provider,
+						streamer: config.streamer,
+						file: config.relativePathStreamer+config.cameraFile
+					}
+				}]
+			});
+			
+			jwplayer('slidesPlayer').setup({
+				skin: 'videoplayer/jwplayer-5.10/skin/nacht_slidePlayer.zip',
+				width: 170,
+				height: 100,
+				timeinterval: 1000,
+				modes: [{
+					type: 'flash',
+					src: 'videoplayer/jwplayer-5.10/player.swf',
+					config: {
+						provider: config.provider,
+						streamer: config.streamer,
+						file: config.relativePathStreamer+config.slidesFile
+					}
+				}]
+			});
+			
+			// player_resize
+			// Small fix for iPad and iPhone
+			if ( navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/iPad/i) ){
+				crop = 180;
+			}
+			
+			PR_cameraContainer = document.getElementById('cameraPlayer');
+			PR_slideContainer = document.getElementById('slidesPlayer');
+			
+			if (PR_cameraContainer){
+				PR_cameraPlayer = jwplayer('cameraPlayer');
+				if(PR_cameraPlayer.isReady()) {
+					cameraAR = PR_cameraPlayer.getWidth() / PR_cameraPlayer.getHeight();
+					cameraPlayerReady = true;
+					content_resize('#container');
+					playerResizeCallback();
+				} else {
+					PR_cameraPlayer.onReady(function() {
+						cameraAR = this.getWidth() / this.getHeight();
+						cameraPlayerReady = true;
+						content_resize('#container');
+						playerResizeCallback();
+					});
+				}
+			} else {
+				cameraPlayerReady = true;
+			}
+
+			if (PR_slideContainer){
+				PR_slidesPlayer = jwplayer('slidesPlayer');
+				if(PR_slidesPlayer.isReady()) {
+					slideAR = PR_slidesPlayer.getWidth() / PR_slidesPlayer.getHeight();
+					slidesPlayerReady = true;
+					content_resize('#container');
+					playerResizeCallback();
+				} else {
+					PR_slidesPlayer.onReady(function() {
+						slideAR = this.getWidth() / this.getHeight();
+						slidesPlayerReady = true;
+						content_resize('#container');
+						playerResizeCallback();
+					});
+				}
+			}else {
+				slidesPlayerReady = true;
+			}
+			
+			$(window).wresize(function() { content_resize('#container'); });
+		}
+		
+		function playerResizeCallback() {
+			if(cameraPlayerReady && slidesPlayerReady) {
+				// wc_controller initialize
+				if(typeof AdaSyncController !== "undefined") {
+					AdaSyncController.initialize('cameraPlayer', 'slidesPlayer', true);
+				}
+				
+				// wl_controller initialize
+				if(typeof WebLectureController !== "undefined") {
+					WebLectureController.initialize({
+						lectureData: config.lectureData, 
+						players: ['#cameraPlayer', '#slidesPlayer'],
+						slideContainer: '#slide_container', 
+						controlbar: '#controlbar', 
+						hightoolbar: '#hightoolbar',
+						lectureDir: config.lectureDir
+					});
+				}
+			}
+		}
+	</script>
+
+	
+</head>
+<body>
+	<div id="container">
+		<div id="hightoolbar">
+			<div id="previous_chapter"></div>
+			<div id="previous_slide"></div>
+			<div id="list_chapter"><select></select></div>
+			<div id="next_slide"></div>
+			<div id="next_chapter"></div>
+			<div id="slide_info">
+			</div>
+			<div id="chapter_info">
+				<div id="name_info">Chapter:</div>
+				<div id="speaker_info">Speaker:</div>
+			</div>
+			<div id="thumbs" class="hide_thumbs"></div>
+			<div id="videos" class="hide_camera"></div>
+		</div>
+		<div style="clear: both"></div>
+		<div class="player">
+			<div id="cameraPlayer_container">
+				<div id="cameraPlayer" style="float: left"></div>
+			</div>
+			<div id="slidesPlayer_container" style="padding-left: 10px;">
+				<div id="slidesPlayer" style="float: left"></div>
+			</div>
+			<div style="clear: both"></div>
+		</div>
+		<div style="clear: both"></div>
+		<div id="bottom">
+			<div id="slide_container">
+				<div class="viewport">
+					<div class="overview">
+					</div>
+				</div>
+				<div class="scrollbar">
+					<div class="track">
+						<div class="start"></div>
+						<div class="thumb">
+							<div class="start"></div>
+							<div class="end"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="controlbar">
+				<div id="play" class="play"></div>
+				<div class="track">
+					<div class="playhead"></div>
+				</div>
+				<div class="time">
+					<span class="progress"></span>
+					<strong class="duration"></strong>
+				</div>
+				<div id="sound" class="mute"></div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
