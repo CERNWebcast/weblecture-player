@@ -1,5 +1,5 @@
 var globals = {
-    // vp = videoplayer
+    // note: vp used for videoplayer
     jw_videoplayers: [],
     jw_camera_vp: null,
     jw_slides_vp: null,
@@ -35,8 +35,8 @@ var Player = (function(){
         thumbs_effect_delay: 100, // transition delay on mouse hover on thumbnails
         thumbs_padding_bottom: 5,
         // helper vars
-        current_thumb: -1,
-        current_chapter: -1,
+        current_thumb: 0,
+        current_chapter: 0,
         previous_seek_time: 0,
         controlbar_btns_width: 0,
         $scrollbar: null,
@@ -89,15 +89,12 @@ var Player = (function(){
             $('#chaptersbar').remove();
         }
 
-        $('#toggle_camera').click(function(){
-            btn_toggle_camera_onClick();
+        $('#toggles input:radio').change(function(){
+            toggle_videos($(this).val());
         });
-        $('#toggle_camera').tooltip({placement: 'bottom', container: 'body', title: 'Hide camera videoplayer'});
-
-        $('#toggle_slides').click(function(){
-            btn_toggle_slides_onClick();
-        });
-        $('#toggle_slides').tooltip({placement: 'bottom', container: 'body', title: 'Hide slides videoplayer'});
+        $('#camera_only').parent().tooltip({placement: 'bottom', container: 'body', title: 'Show only camera videoplayer'});
+        $('#slides_only').parent().tooltip({placement: 'bottom', container: 'body', title: 'Show only slides videoplayer'});
+        $('#both_videos').parent().tooltip({placement: 'bottom', container: 'body', title: 'Show both camera and slides videoplayers'});
 
         $('#toggle_thumbs').click(function(){
             btn_toggle_thumbs_onClick();
@@ -125,23 +122,23 @@ var Player = (function(){
             .onSeek(onTime)
             .onPlay(function(){
                 $('#btn_play').data('current', 'play');
-                $('#btn_play span').removeClass('glyphicon-play').addClass('glyphicon-pause');
+                $('#btn_play span').removeClass('fa-icon-play').addClass('fa-icon-pause');
                 $('#btn_play').tooltip('hide').attr('data-original-title', 'Click to pause').tooltip('fixTitle');
             })
             .onPause(function(){
                 $('#btn_play').data('current', 'pause');
-                $('#btn_play span').removeClass('glyphicon-pause').addClass('glyphicon-play');
+                $('#btn_play span').removeClass('fa-icon-pause').addClass('fa-icon-play');
                 $('#btn_play').tooltip('hide').attr('data-original-title', 'Click to play').tooltip('fixTitle');
             })
             .onMute(function(e){
                 if (e.mute === true){
                     $('#btn_volume').data('current', 'muted');
-                    $('#btn_volume span').removeClass('glyphicon-volume-up').addClass('glyphicon-volume-off');
+                    $('#btn_volume span').removeClass('fa-icon-volume-up').addClass('fa-icon-volume-off');
                     $('#btn_volume').tooltip('hide').attr('data-original-title', 'Click to unmute').tooltip('fixTitle');
                     $('#volume-slider').hide();
                 } else {
                     $('#btn_volume').data('current', 'unmuted');
-                    $('#btn_volume span').removeClass('glyphicon-volume-off').addClass('glyphicon-volume-up');
+                    $('#btn_volume span').removeClass('fa-icon-volume-off').addClass('fa-icon-volume-up');
                     $('#btn_volume').tooltip('hide').attr('data-original-title', 'Click to mute').tooltip('fixTitle');
                     if (p.first_onmute_event)
                         volume_slider_show();
@@ -298,13 +295,13 @@ var Player = (function(){
             },
             {
                 element: "#camera_vp_container",
-                placement: 'bottom',
+                placement: 'right',
                 title: "Camera videoplayer",
                 content: "This is the camera videoplayer where usually the speaker is shown.<br />Click on the <strong>fullscreen</strong> icon on the bottom of the player to enlarge the video."
             },
             {
                 element: "#slides_vp_container",
-                placement: 'bottom',
+                placement: 'left',
                 title: "Slides videoplayer",
                 content: "This is the slides videoplayer where usually the slides are shown.<br />Click on the <strong>fullscreen</strong> icon on the bottom of the player to enlarge the video."
             },
@@ -356,17 +353,20 @@ var Player = (function(){
         if (p.current_thumb >= 0){
             // try to keep the current thumb always in the center
             var new_x = Math.round($('#thumb_'+p.current_thumb).position().left),
-                track_x = Math.round( (new_x - p.current_centered) * $('#track').width() / $('#thumbnails').width() );
+                track_x = Math.round( (new_x - p.current_centered) * $('#track').width() / $('#thumbnails').width() ),
+                max_x = $('#track').width() - $('#track-thumb').width();
 
             // if new_x is less than p.current_centered, we are still at the beginning of the lecture, so do not move the scrollbar
             if (new_x > p.current_centered){
-                if (track_x < $('#track').width() - $('#track-thumb').width()){
+                if (track_x < max_x){
                     // move the scrollabar of new_x - p.current_centered
                     p.$scrollbar.tinyscrollbar_update(new_x - p.current_centered);
                 } else {
                     // move the scroll at the end
-                    p.$scrollbar.tinyscrollbar_update($('#thumbnails').width() - $('#track').width());
+                    p.$scrollbar.tinyscrollbar_update('bottom');
                 }
+            } else {
+                p.$scrollbar.tinyscrollbar_update(0);
             }
         }
     };
@@ -496,7 +496,8 @@ var Player = (function(){
 
         if ($(window).width() > 0 && $(window).height() > 0){
             // players container height
-            var vp_height = $(window).height() - $('#topbar').height() - $('#thumbs_scrollbar').height() - $('#controlbar').height();
+            var ts_height = ($('#thumbs_scrollbar').is(':visible')) ? $('#thumbs_scrollbar').height() : 0,
+                vp_height = $(window).height() - $('#topbar').height() - ts_height - $('#controlbar').height();
             $('#videoplayers').height(vp_height);
 
             // resize title and speakers
@@ -505,9 +506,14 @@ var Player = (function(){
             $('#speakers').css('max-width', controls_width - $('#when').width());
 
             // scrollbar repositioning
-            p.$scrollbar.tinyscrollbar_update('relative');
-            p.current_centered = Math.round($('#scrollbar').width() / 2 - p.thumbs_current.w / 2);
-            scrollbar_controller();
+            if ( $('#thumbnails').width() < $(window).width() )
+                $('#scrollbar').hide();
+            else if ($('#thumbs_scrollbar').is(':visible')){
+                $('#scrollbar').show();
+                p.$scrollbar.tinyscrollbar_update('relative');
+                p.current_centered = Math.round($('#scrollbar').width() / 2 - p.thumbs_current.w / 2);
+                scrollbar_controller();
+            }
 
             // resize progress bar
             $('#progressbar_container').width($('#controlbar').width() - p.controlbar_btns_width);
@@ -546,59 +552,50 @@ var Player = (function(){
             _seek_videoplayers(globals.lecture.chapters[id].begin);
     };
 
-    btn_toggle_camera_onClick = function(){
-        if (config.debug) console.log("BTN click: toggle camera");
-        if (globals.camera_vp_visible){
+    toggle_videos = function(sel){
+        if (sel === "0"){
+            // show camera only
             if (globals.slides_vp_visible){
-                // hide only if slides is visible
-                if (globals.player_mode == 'html5'){
-                    $('#camera_vp_jwplayer_logo').width(0).height(0);
-                    $('#camera_vp_jwplayer_controlbar').hide();
-                }
-                globals.camera_vp_visible = false;
-                $(window).trigger('resize');
-                $('#toggle_camera').addClass('active');
-                $('#toggle_slides').addClass('disabled');
-                $('#toggle_camera').tooltip('hide').attr('data-original-title', 'Show camera videoplayer').tooltip('fixTitle');
-            }
-        } else {
-            // hidden, show it
-            globals.camera_vp_visible = true;
-            $(window).trigger('resize');
-            if (globals.player_mode == 'html5'){
-                $('#camera_vp_jwplayer_controlbar').show();
-            }
-            $('#toggle_camera').removeClass('active');
-            $('#toggle_slides').removeClass('disabled');
-            $('#toggle_camera').tooltip('hide').attr('data-original-title', 'Hide camera videoplayer').tooltip('fixTitle');
-        }
-    };
-
-    btn_toggle_slides_onClick = function(){
-        if (config.debug) console.log("BTN click: toggle slides");
-        if (globals.slides_vp_visible){
-            if (globals.camera_vp_visible){
-                // hide only if camera is visible
+                // hide logo and control bar of the player
                 if (globals.player_mode == 'html5'){
                     $('#slides_vp_jwplayer_logo').width(0).height(0);
-                    $('#slides_vp_jwplayer_controlbar').hide();
+                    $('#slides_vp_jwplayer_controlbar').width(0).height(0);
                 }
+                // force resize with only camera visible
                 globals.slides_vp_visible = false;
+                globals.camera_vp_visible = true;
                 $(window).trigger('resize');
-                $('#toggle_slides').addClass('active');
-                $('#toggle_camera').addClass('disabled');
-                $('#toggle_slides').tooltip('hide').attr('data-original-title', 'Show slides videoplayer').tooltip('fixTitle');
+                // adjust buttons
+                $('#camera_only').parent().removeClass('btn-default').addClass('btn-primary');
+                $('#slides_only').parent().removeClass('btn-primary').addClass('btn-default');
+                $('#both_videos').parent().removeClass('btn-primary').addClass('btn-default');
             }
-        } else {
-            // hidden, show it
+        } else if (sel === "1"){
+            // show slides only
+            if (globals.camera_vp_visible){
+                // hide logo and control bar of the player
+                if (globals.player_mode == 'html5'){
+                    $('#camera_vp_jwplayer_logo').width(0).height(0);
+                    $('#camera_vp_jwplayer_controlbar').width(0).height(0);
+                }
+                // force resize with only slides visible
+                globals.camera_vp_visible = false;
+                globals.slides_vp_visible = true;
+                $(window).trigger('resize');
+                // adjust buttons
+                $('#slides_only').parent().removeClass('btn-default').addClass('btn-primary');
+                $('#camera_only').parent().removeClass('btn-primary').addClass('btn-default');
+                $('#both_videos').parent().removeClass('btn-primary').addClass('btn-default');
+            }
+        } else if (sel === "2"){
+            // show camera and slides, restoring dimensions
+            globals.camera_vp_visible = true;
             globals.slides_vp_visible = true;
             $(window).trigger('resize');
-            if (globals.player_mode == 'html5'){
-                $('#slides_vp_jwplayer_controlbar').show();
-            }
-            $('#toggle_slides').removeClass('active');
-            $('#toggle_camera').removeClass('disabled');
-            $('#toggle_slides').tooltip('hide').attr('data-original-title', 'Hide slides videoplayer').tooltip('fixTitle');
+            // adjust buttons
+            $('#both_videos').parent().removeClass('btn-default').addClass('btn-primary');
+            $('#camera_only').parent().removeClass('btn-primary').addClass('btn-default');
+            $('#slides_only').parent().removeClass('btn-primary').addClass('btn-default');
         }
     };
 
@@ -606,11 +603,13 @@ var Player = (function(){
         if (config.debug) console.log("BTN click: toggle thumbs");
         if ($('#thumbs_scrollbar').is(':visible')){
             $('#thumbs_scrollbar').hide();
-            $('#toggle_thumbs').addClass('active');
+            $(window).trigger('resize');
+            $('#toggle_thumbs').removeClass('btn-primary').addClass('btn-default');
             $('#toggle_thumbs').tooltip('hide').attr('data-original-title', 'Show thumbnails').tooltip('fixTitle');
         } else {
             $('#thumbs_scrollbar').show();
-            $('#toggle_thumbs').removeClass('active');
+            $(window).trigger('resize');
+            $('#toggle_thumbs').removeClass('btn-default').addClass('btn-primary');
             $('#toggle_thumbs').tooltip('hide').attr('data-original-title', 'Hide thumbnails').tooltip('fixTitle');
         }
     };
@@ -663,7 +662,7 @@ var Player = (function(){
                     {
                         type: 'flash',
                         src: 'videoplayer/jwplayer-5.10/player.swf',
-                        config: {
+                        config: { // change this if you are not using streaming
                             provider: config.provider,
                             streamer: config.streamer,
                             file: config.relative_path+config.camera_file
@@ -693,7 +692,7 @@ var Player = (function(){
                     {
                         type: 'flash',
                         src: 'videoplayer/jwplayer-5.10/player.swf',
-                        config: {
+                        config: { // change this if you are not using streaming
                             provider: config.provider,
                             streamer: config.streamer,
                             file: config.relative_path+config.slides_file

@@ -29,6 +29,8 @@ body {
 
 .btn-lg {
     padding: 6px 16px !important;
+    font-size: 18px !important;
+    line-height: 1.33 !important;
 }
 
 .navbar {
@@ -37,24 +39,14 @@ body {
 
 /* buttons */
 .navbar-inverse .navbar-nav > li > a,
-.btn-default,
-.btn-default:hover,
-.btn-default:active {
+.navbar-inverse .navbar-nav > li > a.btn-default,
+.navbar-inverse .navbar-nav > li > a.btn-default:hover,
+.navbar-inverse .navbar-nav > li > a.btn-default:active {
     color: #666;
 }
-.btn-primary {
-    color: #ffffff;
-}
-.btn-primary:hover,
-.btn-primary:focus,
-.btn-primary:active,
-.btn-primary.active,
-.open .dropdown-toggle.btn-primary {
-  color: #ffffff;
-}
 
-.navbar-inverse .navbar-nav > li > a:hover,
-.navbar-inverse .navbar-nav > li > a:focus {
+.navbar-inverse .navbar-nav > li > .btn-default:hover,
+.navbar-inverse .navbar-nav > li > .btn-default:focus {
     background-color: #EBEBEB;
     border-color: #ADADAD;
     color: #666;
@@ -96,7 +88,15 @@ body {
 body.modal-open,
 .modal-open .navbar-fixed-top,
 .modal-open .navbar-fixed-bottom {
-  margin-right: 0;
+    margin-right: 0;
+}
+
+.modal-dialog.large {
+    width: 80%; /* desired relative width */
+    left: 10%; /* (100%-width)/2 */
+    /* place center */
+    margin-left:auto;
+    margin-right:auto;
 }
 
 /* Slider **********************************************************/
@@ -220,15 +220,10 @@ body.loading .loading_modal {
     width: 90px;
 }
 
-#toggles {
-    margin: 0 10px;
-}
-
 /* CHAPTERS BAR **********************************************************/
 
 #chaptersbar {
     display: none;
-    margin-left: 10px;
 }
 #chaptersbar li {
     text-align: left;
@@ -262,12 +257,14 @@ body.loading .loading_modal {
     width: 100%;
     display:inline-block;
     overflow: hidden;
+    margin-bottom: 5px;
 }
 
 #thumbnails_container {
     width: 100%;
     position: relative;
     overflow: hidden;
+    margin-bottom: 2px;
 }
 
 #thumbnails {
@@ -312,9 +309,8 @@ body.loading .loading_modal {
 /* TinyScrollbar **********************************************************/
 
 #scrollbar {
+    display: none;
     position: relative;
-    margin-top: 2px;
-    margin-bottom: 5px;
     height: 15px;
 }
 
@@ -349,6 +345,7 @@ body.loading .loading_modal {
 }
 
 /* CONTROL BAR **********************************************************/
+
 #controlbar a {
     padding-left: 30px;
     padding-right: 30px;
@@ -380,7 +377,10 @@ body.loading .loading_modal {
     padding-top: 5px;
 }
 
-/* CONTROL BAR **********************************************************/
+/* MODALS **********************************************************/
 #help-about {
+    overflow-y: hidden;
+}
+#get-link {
     overflow-y: hidden;
 }

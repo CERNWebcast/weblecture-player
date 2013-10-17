@@ -16,7 +16,7 @@ var Helpers = (function(){
 
     /* input format YYYY-MM-DD */
     format_date = function(date){
-        var d = new Date(date.split('-')),
+        var d = new Date(date),
             day = d.getDate();
         if (day === 1 || day === 21 || day === 31)
             day += 'st';

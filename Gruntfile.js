@@ -16,7 +16,7 @@ module.exports = function(grunt) {
             banner: '<%= banner %>',
             stripBanners: true
         },
-        target: {
+        task1: {
             files: [
                 {
                     src: [ // order is important
@@ -47,7 +47,19 @@ module.exports = function(grunt) {
             banner: '<%= banner %>',
             mangle: false // do not change var and function names
         },
-        target: {
+        task1: {
+            files: [
+                {
+                    src: ['src/js/libs/jquery.tinyscrollbar.js'],
+                    dest: 'src/js/libs/jquery.tinyscrollbar.min.js'
+                },
+                {
+                    src: ['src/js/libs/jquery.ba-throttle-debounce.js'],
+                    dest: 'src/js/libs/jquery.ba-throttle-debounce.min.js'
+                }
+            ]
+        },
+        task2: {
             files: [
                 {
                     src: ['src/js/weblecture-player.js'],
@@ -86,7 +98,7 @@ module.exports = function(grunt) {
         }
     },
     copy: {
-        target: {
+        task1: {
             files: [
                 { src: [ 'src/js/config.js' ], dest: 'dist/js/config.js' },
                 { src: [ 'src/js/libs/html5shiv.js' ], dest: 'dist/js/html5shiv.js' },
@@ -95,9 +107,9 @@ module.exports = function(grunt) {
         }
     },
     clean: {
-        target: {
+        task1: {
             files: [
-                { src: ['src/js/weblecture-player.js'] }
+                { src: ['src/js/weblecture-player.js', 'src/js/libs/jquery.tinyscrollbar.min.js', 'src/js/libs/jquery.ba-throttle-debounce.min.js'] }
             ]
         }
     },
@@ -143,7 +155,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-imagemin');
 
     // Default task.
-    grunt.registerTask('default', ['concat', 'uglify', 'cssmin', 'copy', 'imagemin', 'clean']);
+    grunt.registerTask('default', ['uglify:task1', 'concat', 'uglify:task2', 'cssmin', 'copy', 'imagemin', 'clean']);
 
     grunt.registerTask('debug', ['concat']);
 

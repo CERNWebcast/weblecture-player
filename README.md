@@ -1,49 +1,53 @@
-README
+WebLecture Player
+===
+## What is
 
-what you need?
+At [CERN](www.cern.ch) we record hundreds of lectures per year. To give the possibility to anyone to watch the lecture afterwards, we have created a custom videoplayer, web based, a web lecture player.
 
-/*
-    * We NEED this server configuration to work with protected dir
-    * Access-Control-Allow-Origin: *
-    * Access-Control-Allow-Methods: GET, POST, PUT, DELETE
-    * Access-Control-Allow-Headers: Authorization
-    */
-Change also crossdomain.xml
+![player screenshot](player.jpg)
 
-webcast streaming with timecode enabled
+## Features
 
-camera and slides files
-thumbs
-lecture.xml
+* Full size web lecture player
+* Camera and slides players are in-sync
+* Fully HTML5, switching back to Flash in case of not supported browser
+* List of thumbails with timing information
+* Auto-resize following browser dimensions
+* Tested on IE (8 or higher), Chrome, Firefox and Safari
 
-edit config.js and method set_path
+## What you needed
 
-LICENSE
+The player will look for a folder which contains:
 
-html5shiv
-http://code.google.com/p/html5shiv/
-Dual licensed under the MIT or GPL Version 2 licenses
+* 1 video for the camera or speaker, called camera.mp4.
+* 1 video for the slides of the lecture, called slides.mp4.
+* thumbnails, a collections of screenshot (resized) taken from the slides video, thumbs/timing.jpg.
+* a JSON file (or XML), called lecture.json, describing the lecture: title, speakers, date, series of slides with timing info.
 
+Paths to files and folders can be changed in **config.js**.
 
-bootstrap-slider.js
-http://www.eyecon.ro/bootstrap-slider/
-Same as bootstrap
+Note: you need to set correctly the file **crossdomain.xml** (required by Flash) and allow JS to access to folders on the webservers by setting:
 
+* Access-Control-Allow-Origin: *.yourdomain.com
+* Access-Control-Allow-Methods: GET, POST
+* Access-Control-Allow-Headers: Authorization
 
-* http://benalman.com/projects/jquery-throttle-debounce-plugin/
- *
- * Copyright (c) 2010 "Cowboy" Ben Alman
- * Dual licensed under the MIT and GPL licenses.
- * http://benalman.com/about/license/
+## Develop
 
-jquery.tinyscrollbar
-http://baijs.nl/tinyscrollbar/
+You are free and welcome to use and contribute to the project.
+You can find all the source code in **src** folder, and it is probably where to put the hands on.
+To build the **dist** version, use [Grunt](http://gruntjs.com/).
 
-jquery
+### SOFTWARE INCLUDED AND LICENSES
 
-bootstrap 3
-http://getbootstrap.com
-Bootstrap is released under the Apache 2 license and is copyright 2013 Twitter.
+The player is released with GPLv3 license and comes with:
 
-
-index.html is different in src and dist
+* [jQuery](https://jquery.org/license/) and a couple of plugins, MIT License:
+    + [Tiny Scrollbar](http://baijs.nl/tinyscrollbar/) customized.
+    + [jQuery debounce](http://benalman.com/projects/jquery-throttle-debounce-plugin/).
+* [Bootstrap](http://getbootstrap.com) and a couple of plugins, Apache 2 License:
+    + [Slider for Bootstrap](http://www.eyecon.ro/bootstrap-slider/) customized.
+    + [Bootstrap Tour](http://bootstraptour.com/).
+* [JWPlayer 5.10](http://developer.longtailvideo.com) free version, [CC License](http://creativecommons.org/licenses/by-nc-sa/3.
+0/), customized.
+* [Font Awesome](http://fortawesome.github.io/Font-Awesome/license/), GPL compatible License.

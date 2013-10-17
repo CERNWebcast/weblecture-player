@@ -19,8 +19,8 @@ var Resize = (function(){
             camera = calculate_new_dims(container_width, container_height, globals.camera_vp_ar, camera_vp_size, 'camera');
             slides = calculate_new_dims(container_width, container_height, globals.slides_vp_ar, slides_vp_size, 'slides');
 
-            $(globals.camera_vp_container).css('float', 'left');
-            $(globals.slides_vp_container).css('float', 'right');
+            $(globals.camera_vp_container).css('float', 'left').css('position', 'relative').css('top', '').css('left', '');
+            $(globals.slides_vp_container).css('float', 'right').css('position', 'relative').css('top', '').css('left', '');
 
             globals.jw_camera_vp.resize(camera.w, camera.h);
             globals.jw_slides_vp.resize(slides.w, slides.h);
@@ -29,8 +29,10 @@ var Resize = (function(){
                 // only camera will be visible
                 // hide slides
                 globals.jw_slides_vp.resize(1, 1);
+                $(globals.slides_vp_container).css('position', 'absolute').css('top', 0).css('left', 0);
                 // resize camera videoplayer to fit the screen
                 camera = calculate_new_dims(container_width, container_height, globals.camera_vp_ar, 90, 'camera');
+                $(globals.camera_vp_container).css('position', 'relative').css('top', '').css('left', '');
                 globals.jw_camera_vp.resize(camera.w, camera.h);
                 // align to center
                 $(globals.camera_vp_container).css('float', 'none');
@@ -39,8 +41,10 @@ var Resize = (function(){
                 // only slides will be visible
                 // hide camera
                 globals.jw_camera_vp.resize(1, 1);
+                $(globals.camera_vp_container).css('position', 'absolute').css('top', 0).css('left', 0);
                 // resize slides videoplayer to fit the screen
                 slides = calculate_new_dims(container_width, container_height, globals.slides_vp_ar, 90, 'slides');
+                $(globals.slides_vp_container).css('position', 'relative').css('top', '').css('left', '');
                 globals.jw_slides_vp.resize(slides.w, slides.h);
                 // align to center
                 $(globals.slides_vp_container).css('float', 'none');
