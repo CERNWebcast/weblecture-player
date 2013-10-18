@@ -80,6 +80,7 @@ module.exports = function(grunt) {
             files: [
                 {
                     src: [
+                        'src/css/font-awesome.min.css',
                         'src/css/bootstrap.min.css',
                         'src/css/bootstrap-tour.min.css',
                         'src/css/bootstrap-slider.min.css'
