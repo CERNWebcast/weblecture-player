@@ -617,23 +617,20 @@ var Player = (function(){
     /********************************************************************************************/
 
     init = function(){
+
         try {
 
             // first of all try to read the xml
-            var xml_call = $.ajax({
-                url: config.lecture_file['filepath'],
-                error: function (xhr, ajaxconfig, thrownError){
-                    console.error("Error: "+xhr.status+" "+thrownError);
-                    $('.loading_modal').css('background', '#333');
-                    $('#loading_content')
-                        .css('width', '60%')
-                        .css('left', '20%')
-                        .html('<strong>Error loading the player for this lecture.</strong><br />Please contact the support by email at <a href="mailto:'+config.support_email+'">'+config.support_email+'</a>');
-                }
-            });
-
-            // when got xml data, init player
-            $.when(xml_call).done(function(data){
+            $.ajax(config.lecture_file['filepath'])
+            .fail(function (xhr, ajaxconfig, thrownError){
+                console.error("Error: "+xhr.status+" "+thrownError);
+                $('.loading_modal').css('background', '#333');
+                $('#loading_content')
+                    .css('width', '60%')
+                    .css('left', '20%')
+                    .html('<strong>Error loading the player for this lecture.</strong><br />Please contact the support by email at <a href="mailto:'+config.support_email+'">'+config.support_email+'</a>');
+            })
+            .done(function(data){
                 $('#container').show();
                 LectureParser.parse(data);
 
