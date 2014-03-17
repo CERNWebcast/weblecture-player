@@ -621,7 +621,7 @@ var Player = (function(){
     init = function(){
 
         try {
-
+            var error_msg = '<strong>Error loading the player for this lecture.</strong><br />Please check if your browser version supports HTML5 video, with format H.264/MP4, <a href="http://www.jwplayer.com/html5/formats/" target="_blank">here</a>.<br />If not, please check that you have installed and enabled <a href="http://get.adobe.com/flashplayer/">Adobe Flash Player</a>.<br /><br />You contact support by email at <a href="mailto:'+config.support_email+'">'+config.support_email+'</a>.';
             // first of all try to read the xml
             $.ajax(config.lecture_file['filepath'])
             .fail(function (xhr, ajaxconfig, thrownError){
@@ -630,7 +630,7 @@ var Player = (function(){
                 $('#loading_content')
                     .css('width', '60%')
                     .css('left', '20%')
-                    .html('<strong>Error loading the player for this lecture.</strong><br />Please check if your browser version supports HTML5 video, with format H.264/MP4, <a href="http://www.jwplayer.com/html5/formats/" target="_blank">here</a>.<br />If not, please check that you have installed and enabled <a href="http://get.adobe.com/flashplayer/">Adobe Flash Player</a>.<br /><br />You contact support by email at <a href="mailto:'+config.support_email+'">'+config.support_email+'</a>.');
+                    .html(error_msg);
             })
             .done(function(data){
                 $('#container').show();
@@ -763,8 +763,4 @@ var Player = (function(){
 
     };
 
-    return {
-        init: init
-    };
-
-}());
+    retu
