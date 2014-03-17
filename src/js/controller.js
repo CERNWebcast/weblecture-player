@@ -122,23 +122,23 @@ var Player = (function(){
             .onSeek(onTime)
             .onPlay(function(){
                 $('#btn_play').data('current', 'play');
-                $('#btn_play span').removeClass('fa-icon-play').addClass('fa-icon-pause');
+                $('#btn_play span').removeClass('fa-play').addClass('fa-pause');
                 $('#btn_play').tooltip('hide').attr('data-original-title', 'Click to pause').tooltip('fixTitle');
             })
             .onPause(function(){
                 $('#btn_play').data('current', 'pause');
-                $('#btn_play span').removeClass('fa-icon-pause').addClass('fa-icon-play');
+                $('#btn_play span').removeClass('fa-pause').addClass('fa-play');
                 $('#btn_play').tooltip('hide').attr('data-original-title', 'Click to play').tooltip('fixTitle');
             })
             .onMute(function(e){
                 if (e.mute === true){
                     $('#btn_volume').data('current', 'muted');
-                    $('#btn_volume span').removeClass('fa-icon-volume-up').addClass('fa-icon-volume-off');
+                    $('#btn_volume span').removeClass('fa-volume-up').addClass('fa-volume-off');
                     $('#btn_volume').tooltip('hide').attr('data-original-title', 'Click to unmute').tooltip('fixTitle');
                     $('#volume-slider').hide();
                 } else {
                     $('#btn_volume').data('current', 'unmuted');
-                    $('#btn_volume span').removeClass('fa-icon-volume-off').addClass('fa-icon-volume-up');
+                    $('#btn_volume span').removeClass('fa-volume-off').addClass('fa-volume-up');
                     $('#btn_volume').tooltip('hide').attr('data-original-title', 'Click to mute').tooltip('fixTitle');
                     if (p.first_onmute_event)
                         volume_slider_show();
@@ -213,7 +213,7 @@ var Player = (function(){
         $('#btn_play').tooltip({container: 'body'});
 
         // volume btn and slider ------------------------------------
-        $('.vslider').slider({ max: 100, orientation: 'vertical', value: 100-80, selection: 'after' }).on('slide', function(e){
+        $('.vslider').slider({ max: 100, orientation: 'vertical', value: 100-80, selection: 'after', tooltip: 'hide' }).on('slide', function(e){
             // bootstrap-slider works from 0 to 100, but we want from 100 to 0 to have the correct the visualization
             $('#lbl_volume').html(100-e.value);
             globals.jw_camera_vp.setVolume(100-e.value);
@@ -253,17 +253,19 @@ var Player = (function(){
                 _seek_videoplayers(seconds);
             }
         });
-        $('#progressbar').tooltip({container: 'body', animation: 'false', title: '00:00:01', trigger: 'manual'});
+        $('#progressbar').tooltip({container: 'body', animation: 'false', title: '<span id="progressbar_tooltip">00:00:01</span>', trigger: 'manual', html: true});
         $("#progressbar").mousemove(function(e){
             var seconds = Math.round((e.clientX - $(this).offset().left) * globals.lecture.duration / $('#progressbar').width()),
                 fsecs = Helpers.format_sec2time(seconds);
 
-            if ($('.tooltip')){
-                $('.tooltip').css('left', (e.pageX - Math.round($('.tooltip').width() / 2))+'px');
-                $('.tooltip .tooltip-inner').html(fsecs);
+            if ($(this).tooltip()){
+                var $tooltip_inner = $('#progressbar_tooltip'),
+                    $tooltip = $tooltip_inner.parents('.tooltip');
+                $tooltip.css('left', (e.pageX - Math.round($tooltip.width() / 2))+'px');
+                $tooltip_inner.html(fsecs);
             }
         }).hover(function(e){
-            $('#progressbar').tooltip('show');
+            $(this).tooltip('show');
         }, function(){
             $(this).tooltip('hide');
         });
@@ -628,14 +630,15 @@ var Player = (function(){
                 $('#loading_content')
                     .css('width', '60%')
                     .css('left', '20%')
-                    .html('<strong>Error loading the player for this lecture.</strong><br />Please contact the support by email at <a href="mailto:'+config.support_email+'">'+config.support_email+'</a>');
+                    .html('<strong>Error loading the player for this lecture.</strong><br />Please check if your browser version supports HTML5 video, with format H.264/MP4, <a href="http://www.jwplayer.com/html5/formats/" target="_blank">here</a>.<br />If not, please check that you have installed and enabled <a href="http://get.adobe.com/flashplayer/">Adobe Flash Player</a>.<br /><br />You contact support by email at <a href="mailto:'+config.support_email+'">'+config.support_email+'</a>.');
             })
             .done(function(data){
                 $('#container').show();
                 LectureParser.parse(data);
 
-                // replace the page title
+                // replace the page title and the support link
                 document.title = globals.lecture.title;
+                $('.contact-email').attr("href", "mailto:"+config.support_email).html(config.support_email);
 
                 // set HTML5 video tags
                 $('#camera_vp_source').attr('src', config.full_url + 'camera.mp4');

@@ -3,14 +3,19 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
     <title>WebLecture Player</title>
-
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" media="screen" />
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" media="screen" />
-    <link rel="stylesheet" href="css/bootstrap-slider.min.css" type="text/css" media="screen" />
-    <link rel="stylesheet" href="css/bootstrap-tour.min.css" type="text/css" media="screen" />
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <!-- @if NODE_ENV == 'DEVELOPMENT' -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.css">
+    <link rel="stylesheet" href="libs/bootstrap-slider-2.0.0/css/bootstrap-slider.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="libs/bootstrap-tour-0.9.1/css/bootstrap-tour.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="css/weblecture-player.css" type="text/css" media="screen" />
+    <!-- @endif -->
+    <!-- @if NODE_ENV == 'PRODUCTION' -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/libs.min.css?v=1.1.0" type="text/css" media="screen" />
+    <link rel="stylesheet" href="css/weblecture-player.min.css?v=1.1.0" type="text/css" media="screen" />
+    <!-- @endif -->
 
     <!-- HTML5 shim IE8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -36,13 +41,13 @@
             <ul id="topbar-right" class="nav navbar-nav navbar-right">
                 <li>
                     <a href="#" id="previous_slide" class="btn btn-default btn-lg" data-toggle="tooltip" title="Go to the previous slide">
-                        <span class="fa-icon fa-icon-chevron-left"></span>
+                        <span class="fa fa-chevron-left"></span>
                     </a>
                 </li>
                 <li id="counter"><span id="current_slide">0</span> / <span id="total_slides">0</span></li>
                 <li style="margin-right: 10px;">
                     <a href="#" id="next_slide" class="btn btn-default btn-lg" data-toggle="tooltip" title="Go to the next slide">
-                        <span class="fa-icon fa-icon-chevron-right"></span>
+                        <span class="fa fa-chevron-right"></span>
                     </a>
                 </li>
                 <li id="chaptersbar" style="margin-right: 10px;">
@@ -57,33 +62,33 @@
                     <div id="toggles" class="btn-group" data-toggle="buttons" style="margin-top: 6px;">
                         <label class="btn btn-default btn-lg">
                             <input type="radio" name="options" id="camera_only" value="0">
-                            <span class="fa-icon fa-icon-facetime-video"></span>
+                            <span class="fa fa-video-camera"></span>
                         </label>
                         <label class="btn btn-default btn-lg">
                             <input type="radio" name="options" id="slides_only" value="1">
-                            <span class="fa-icon fa-icon-picture"></span>
+                            <span class="fa fa-picture-o"></span>
                         </label>
                         <label class="btn btn-primary btn-lg active" style="padding-left: 8px !important; padding-right: 8px !important;">
                             <input type="radio" name="options" id="both_videos" value="2">
-                            <span class="fa-icon fa-icon-facetime-video"></span>
-                            <span class="fa-icon fa-icon-picture"></span>
+                            <span class="fa fa-video-camera"></span>
+                            <span class="fa fa-picture-o"></span>
                         </label>
                     </div>
                 </li>
                 <li style="margin-right: 10px;">
                     <div class="btn-group">
                         <a href="#" id="toggle_thumbs" class="btn btn-primary btn-lg active">
-                            <span class="fa-icon fa-icon-list-alt"></span>
+                            <span class="fa fa-list-alt"></span>
                         </a>
                     </div>
                 </li>
                 <li style="margin-right: 5px;">
                     <div class="btn-group">
                         <a id="btn_link" data-toggle="modal" href="#get-link" class="btn btn-default btn-lg" data-toggle="tooltip" title="Link to this video">
-                            <span class="fa-icon fa-icon-link"></span>
+                            <span class="fa fa-link"></span>
                         </a>
                         <a id="btn_help" data-toggle="modal" href="#help-about" class="btn btn-default btn-lg" data-toggle="tooltip" title="Help!">
-                        <span class="fa-icon fa-icon-question-sign"></span>
+                        <span class="fa fa-question-circle"></span>
                     </a>
                 </li>
             </ul>
@@ -122,7 +127,7 @@
             <ul class="nav navbar-nav">
                 <li class="controls">
                     <a href="#" id="btn_play" class="btn btn-default btn-lg">
-                        <span class="fa-icon fa-icon-pause"></span>
+                        <span class="fa fa-pause"></span>
                     </a>
                 </li>
                 <li class="controls"><p id="lbl_current" class="navbar-text">00:00:00</p></li>
@@ -136,7 +141,7 @@
                 <li class="controls"><p id="lbl_duration" class="navbar-text">00:00:00</p></li>
                 <li class="controls">
                     <a href="#" id="btn_volume" class="btn btn-default btn-lg">
-                        <span class="fa-icon fa-icon-volume-up"></span>
+                        <span class="fa fa-volume-up"></span>
                     </a>
                 </li>
             </ul>
@@ -180,7 +185,7 @@
     </div><!-- /.modal -->
 
     <div id="help-about" class="modal">
-        <div class="modal-dialog large">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -193,7 +198,7 @@
                             <p>
                                 The player is written in HTML/CSS/JS. You need a modern browser and the Flash plugin if your browser is not HTML5 compliant.<br />
                                 The player has been tested on the latest versions of Chrome, Firefox, Safari and Internet Explorer 8.0 or higher.<br /><br />
-                                If you need help, please contact webcast-support@cern.ch
+                                If you need help, please contact <a class="contact-email" href="#"></a>
                             </p>
                         </div>
                         <div class="col-xs-6">
@@ -201,13 +206,14 @@
                             <p>
                                 Created at CERN by:
                                 <ul>
-                                    <li><strong>Tarocco Nicola</strong> - ntarocco@cern.ch</li>
+                                    <li><strong>Tarocco Nicola</strong> - ntarocco@cern.ch - <a href="http://github.com/ntarocco">GitHub</a></li>
+                                    <li><strong>Marek Domaracky</strong> - marek.domaracky@cern.ch</li>
                                 </ul>
                                 with the contribution of
                                 <ul>
                                     <li><strong>Vocella Simon</strong> - svocella@cern.ch</li>
                                 </ul>
-                                This is a free open source project. You can get, fork and contribute to it on GitHub.
+                                This is a free open source project. You can use it, fork it and contribute to it on GitHub. See the license file for more information.
                             </p>
                         </div>
                     </div>
@@ -226,12 +232,15 @@
         </div>
     </div>
 
-    <script type="text/javascript" src="js/libs/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="js/libs/jquery.ba-throttle-debounce.js"></script>
-    <script type="text/javascript" src="js/libs/jquery.tinyscrollbar.js"></script>
-    <script type="text/javascript" src="js/libs/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/libs/bootstrap-tour.min.js"></script>
-    <script type="text/javascript" src="js/libs/bootstrap-slider.min.js"></script>
+    <!-- @if NODE_ENV == 'DEVELOPMENT' -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+    <script type="text/javascript" src="libs/html5shiv-3.7.1/html5shiv.js"></script>
+    <script type="text/javascript" src="libs/respond-1.4.2/respond.js"></script>
+    <script type="text/javascript" src="libs/jquery.ba-throttle-debounce.js"></script>
+    <script type="text/javascript" src="libs/jquery.tinyscrollbar.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.js"></script>
+    <script type="text/javascript" src="libs/bootstrap-slider-2.0.0/js/bootstrap-slider.js"></script>
+    <script type="text/javascript" src="libs/bootstrap-tour-0.9.1/js/bootstrap-tour.js"></script>
     <script type="text/javascript" src="videoplayer/jwplayer-5.10/jwplayer.js"></script>
     <script type="text/javascript" src="js/helpers.js"></script>
     <script type="text/javascript" src="js/lecture_parser.js"></script>
@@ -245,5 +254,21 @@
             Player.init();
         });
     </script>
+    <!-- @endif -->
+    <!-- @if NODE_ENV == 'PRODUCTION' -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="js/libs.min.js?v=1.1.0"></script>
+    <script type="text/javascript" src="videoplayer/jwplayer-5.10/jwplayer.min.js?v=1.1.0"></script>
+    <script type="text/javascript" src="js/weblecture-player.min.js?v=1.1.0"></script>
+    <script type="text/javascript" src="js/config.js?v=1.1.0"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+            config.set_paths();
+            Player.init();
+        });
+    </script>
+    <!-- @endif -->
 </body>
 </html>
