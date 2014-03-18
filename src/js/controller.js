@@ -293,31 +293,31 @@ var Player = (function(){
                 element: "#topbar-right",
                 placement: 'bottom',
                 title: "Controls",
-                content: "Use this control bar to change slide and chapter (if present), hide/show videoplayers and thumbnails, get help."
+                content: "On the top control bar, you can change slides (and chapters if present), hide/show video players and thumbnails, get the links to the lecture and find help."
             },
             {
                 element: "#camera_vp_container",
                 placement: 'right',
                 title: "Camera videoplayer",
-                content: "This is the camera videoplayer where usually the speaker is shown.<br />Click on the <strong>fullscreen</strong> icon on the bottom of the player to enlarge the video."
+                content: "This is the camera videoplayer where you can usually see the speaker.<br />Click on the <strong>fullscreen</strong> icon on the bottom of the player to enlarge this video."
             },
             {
                 element: "#slides_vp_container",
                 placement: 'left',
                 title: "Slides videoplayer",
-                content: "This is the slides videoplayer where usually the slides are shown.<br />Click on the <strong>fullscreen</strong> icon on the bottom of the player to enlarge the video."
+                content: "This is the slides videoplayer where you can usually see the slides.<br />Click on the <strong>fullscreen</strong> icon on the bottom of the player to enlarge this video."
             },
             {
                 element: "#thumbs_scrollbar",
                 placement: 'top',
                 title: "Thumnbnails",
-                content: "Here you have the list of thumbnails for this  web lecture.<br />You can click on a thumb to seek the video.<br />Current thumb is bigger than the others."
+                content: "Here you have the list of thumbnails for this web lecture.<br />You can click on a thumb to seek the video.<br />The current thumb is enlarged."
             },
             {
                 element: "#controlbar",
                 placement: 'top',
                 title: "Controls",
-                content: "Use this control to <strong>start/pause</strong> the player, to <strong>seek</strong> the video to a specific time and adjust the <strong>volume</strong>."
+                content: "Use these controls to <strong>start/pause</strong> the player, <strong>seek</strong> the video to a specific time and adjust the <strong>volume</strong>."
             }
         ]);
         tour.start();
@@ -763,4 +763,8 @@ var Player = (function(){
 
     };
 
-    retu
+    return {
+        init: init
+    };
+
+}());

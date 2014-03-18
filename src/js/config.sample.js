@@ -15,7 +15,7 @@ var config = {
 
     debug: Helpers.param_by_name('debug') == "TRUE",
 
-    support_email: 'webcast-support@cern.ch',
+    support_email: 'myemail@domain.com',
 
     /*
      * Define the path to the lecture's folder, reading params from the url.
