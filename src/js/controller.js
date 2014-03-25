@@ -174,7 +174,7 @@ var Player = (function(){
         $(globals.lecture.thumbs).each(function(i, _){
             if (config.debug) console.log("Draw thumbail #", i);
             var size = (i === 0) ? { w: p.thumbs_current.w, h: p.thumbs_current.h, top: 0, cl: 'current'} : { w: p.thumbs_small.w, h: p.thumbs_small.h, top: p.thumbs_current.h-p.thumbs_small.h, cl: ''},
-                img = '<img style="width: '+size.w+'px; height: '+size.h+'px; top: '+size.top+'px;" src="'+config.full_url+'/'+this.src+'" />',
+                img = '<img style="width: '+size.w+'px; height: '+size.h+'px; top: '+size.top+'px;" src="'+config.full_url+config.thumbs_folder+'/'+this.src+'" />',
                 lbl = '<span class="label label-default thumb_details" style="top: '+size.top+'px;">'+(i+1)+' | '+Helpers.format_duration_thumbs(globals.lecture.thumbs[i].duration)+'</span>',
                 grayed = '<div class="thumb_grayed" style="width: 0; height: '+size.h+'px; top: '+size.top+'px;"></div>',
                 div = '<div id="thumb_'+i+'" data-id="'+i+'" class="thumb '+size.cl+'" style="height: '+p.thumbs_current.h+'px;"></div>';

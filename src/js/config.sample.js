@@ -12,6 +12,7 @@ var config = {
     // file names to stream
     camera_file: 'camera.mp4',
     slides_file: 'slides.mp4',
+    thumbs_folder: 'thumbs', // do not put any extra / before or after
 
     debug: Helpers.param_by_name('debug') == "TRUE",
 
