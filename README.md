@@ -35,6 +35,9 @@ Create a new folder in your www/ dir (it can be a completely different than the 
     * camera.mp4
     * slides.mp4
     * thumbs/
+        * thumb1.png
+        * thumb2.png
+        * thumb3.png
 
 ## lecture.json
 
