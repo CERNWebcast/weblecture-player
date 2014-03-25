@@ -125,14 +125,20 @@ Plus, add and set the file **crossdomain.xml** (required by Flash).
 
 ## Dev
 
-If you want to contribute to the project, you can find all the source code in **src** folder.
-To develop, cd to the root folder of the project, then use [Grunt](http://gruntjs.com/).
+If you want to contribute to the project, you can find the source code in **src** folder.
+To test yout modification, cd to the root folder of the project, then use [Grunt](http://gruntjs.com/).
 
     grunt dev
 
 a dev version of the project will be compiled in the **dist/** folder.
 
-### SOFTWARE INCLUDED AND LICENSES
+### Hints on how to automatize lectures creation
+
+At CERN, a software called Micala (it was released open source) has been developed to create lectures in a format similar to the one described above.
+The tricky part is probably the generation of thumbnails: one solution, the one implemented in Micala, is to use FFMPEG to extract 1 screenshot per second from the slides video, and then run an image comparison algorithm to delete the identical slides. As result, you have the same sequence of slides the speaker presented.
+To simplify things, you can modify the player to be able to play lectures without thumbnails.
+
+## SOFTWARE INCLUDED AND LICENSES
 
 The player is released with GPLv3 license and comes with:
 
